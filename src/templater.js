@@ -1,10 +1,36 @@
-var getByClass = require('get-by-class');
-
 var Templater = function(list) {
-  var itemSource = getItemSource(list.item),
+  var itemSource,
     templater = this;
 
-  function getItemSource(item) {
+  var init = function() {
+    itemSource = templater.getItemSource(list.item);
+    itemSource = templater.clearSourceItem(itemSource, list.valueNames);
+  };
+
+  this.clearSourceItem = function(el, valueNames) {
+    for(var i = 0, il = valueNames.length; i < il; i++) {
+      var elm;
+      if (valueNames[i].data) {
+        for (var j = 0, jl = valueNames[i].data.length; j < jl; j++) {
+          el.setAttribute('data-'+valueNames[i].data[j], '');
+        }
+      } else if (valueNames[i].attr && valueNames[i].name) {
+        elm = list.utils.getByClass(el, valueNames[i].name, true);
+        if (elm) {
+          elm.setAttribute(valueNames[i].attr, "");
+        }
+      } else {
+        elm = list.utils.getByClass(el, valueNames[i], true);
+        if (elm) {
+          elm.innerHTML = "";
+        }
+      }
+      elm = undefined;
+    }
+    return el;
+  };
+
+  this.getItemSource = function(item) {
     if (item === undefined) {
       var nodes = list.list.childNodes,
         items = [];
@@ -12,45 +38,88 @@ var Templater = function(list) {
       for (var i = 0, il = nodes.length; i < il; i++) {
         // Only textnodes have a data attribute
         if (nodes[i].data === undefined) {
-          return nodes[i];
+          return nodes[i].cloneNode(true);
         }
       }
-      return null;
-    } else if (item.indexOf("<") !== -1) { // Try create html element of list, do not work for tables!!
+    } else if (/^tr[\s>]/.exec(item)) {
+      var table = document.createElement('table');
+      table.innerHTML = item;
+      return table.firstChild;
+    } else if (item.indexOf("<") !== -1) {
       var div = document.createElement('div');
       div.innerHTML = item;
       return div.firstChild;
     } else {
-      return document.getElementById(list.item);
+      var source = document.getElementById(list.item);
+      if (source) {
+        return source;
+      }
     }
-  }
+    throw new Error("The list need to have at list one item on init otherwise you'll have to add a template.");
+  };
 
-  /* Get values from element */
   this.get = function(item, valueNames) {
     templater.create(item);
     var values = {};
     for(var i = 0, il = valueNames.length; i < il; i++) {
-      var elm = getByClass(item.elm, valueNames[i], true);
-      values[valueNames[i]] = elm ? elm.innerHTML : "";
+      var elm;
+      if (valueNames[i].data) {
+        for (var j = 0, jl = valueNames[i].data.length; j < jl; j++) {
+          values[valueNames[i].data[j]] = list.utils.getAttribute(item.elm, 'data-'+valueNames[i].data[j]);
+        }
+      } else if (valueNames[i].attr && valueNames[i].name) {
+        elm = list.utils.getByClass(item.elm, valueNames[i].name, true);
+        values[valueNames[i].name] = elm ? list.utils.getAttribute(elm, valueNames[i].attr) : "";
+      } else {
+        elm = list.utils.getByClass(item.elm, valueNames[i], true);
+        values[valueNames[i]] = elm ? elm.innerHTML : "";
+      }
+      elm = undefined;
     }
     return values;
   };
 
-  /* Sets values at element */
   this.set = function(item, values) {
+    var getValueName = function(name) {
+      for (var i = 0, il = list.valueNames.length; i < il; i++) {
+        if (list.valueNames[i].data) {
+          var data = list.valueNames[i].data;
+          for (var j = 0, jl = data.length; j < jl; j++) {
+            if (data[j] === name) {
+              return { data: name };
+            }
+          }
+        } else if (list.valueNames[i].attr && list.valueNames[i].name && list.valueNames[i].name == name) {
+          return list.valueNames[i];
+        } else if (list.valueNames[i] === name) {
+          return name;
+        }
+      }
+    };
+    var setValue = function(name, value) {
+      var elm;
+      var valueName = getValueName(name);
+      if (!valueName)
+        return;
+      if (valueName.data) {
+        item.elm.setAttribute('data-'+valueName.data, value);
+      } else if (valueName.attr && valueName.name) {
+        elm = list.utils.getByClass(item.elm, valueName.name, true);
+        if (elm) {
+          elm.setAttribute(valueName.attr, value);
+        }
+      } else {
+        elm = list.utils.getByClass(item.elm, valueName, true);
+        if (elm) {
+          elm.innerHTML = value;
+        }
+      }
+      elm = undefined;
+    };
     if (!templater.create(item)) {
       for(var v in values) {
         if (values.hasOwnProperty(v)) {
-          // TODO speed up if possible
-          var elm = getByClass(item.elm, v, true);
-          if (elm) {
-            /* src attribute for image tag & text for other tags */
-            if (elm.tagName === "IMG" && values[v] !== "") {
-              elm.src = values[v];
-            } else {
-              elm.innerHTML = values[v];
-            }
-          }
+          setValue(v, values[v]);
         }
       }
     }
@@ -91,6 +160,8 @@ var Templater = function(list) {
       }
     }
   };
+
+  init();
 };
 
 module.exports = function(list) {

@@ -1,14 +1,20 @@
 /*
-List.js 1.1.1
+List.js 1.2
 By Jonny Strömberg (www.jonnystromberg.com, www.listjs.com)
 */
 (function( window, undefined ) {
 "use strict";
 
 var document = window.document,
-  getByClass = require('get-by-class'),
-  extend = require('extend'),
-  indexOf = require('indexof');
+  getByClass = require('./src/utils/get-by-class'),
+  extend = require('./src/utils/extend'),
+  indexOf = require('./src/utils/index-of'),
+  events = require('./src/utils/events'),
+  toString = require('./src/utils/to-string'),
+  naturalSort = require('./src/utils/natural-sort'),
+  classes = require('./src/utils/classes'),
+  getAttribute = require('./src/utils/get-attribute'),
+  toArray = require('./src/utils/to-array');
 
 var List = function(id, options, values) {
 
@@ -22,22 +28,30 @@ var List = function(id, options, values) {
       self.listClass      = "list";
       self.searchClass    = "search";
       self.sortClass      = "sort";
-      self.page           = 200;
+      self.page           = 10000;
       self.i              = 1;
       self.items          = [];
       self.visibleItems   = [];
       self.matchingItems  = [];
       self.searched       = false;
       self.filtered       = false;
+      self.searchColumns  = undefined;
       self.handlers       = { 'updated': [] };
       self.plugins        = {};
-      self.helpers        = {
+      self.valueNames     = [];
+      self.utils          = {
         getByClass: getByClass,
         extend: extend,
-        indexOf: indexOf
+        indexOf: indexOf,
+        events: events,
+        toString: toString,
+        naturalSort: naturalSort,
+        classes: classes,
+        getAttribute: getAttribute,
+        toArray: toArray
       };
 
-      extend(self, options);
+      self.utils.extend(self, options);
 
       self.listContainer = (typeof(id) === 'string') ? document.getElementById(id) : id;
       if (!self.listContainer) { return; }
@@ -76,11 +90,34 @@ var List = function(id, options, values) {
     }
   };
 
+  /*
+  * Re-parse the List, use if html have changed
+  */
+  this.reIndex = function() {
+    self.items          = [];
+    self.visibleItems   = [];
+    self.matchingItems  = [];
+    self.searched       = false;
+    self.filtered       = false;
+    self.parse(self.list);
+  };
+
+  this.toJSON = function() {
+    var json = [];
+    for (var i = 0, il = self.items.length; i < il; i++) {
+      json.push(self.items[i].values());
+    }
+    return json;
+  };
+
 
   /*
   * Add object to list
   */
   this.add = function(values, callback) {
+    if (values.length === 0) {
+      return;
+    }
     if (callback) {
       addAsync(values, callback);
       return;
@@ -92,13 +129,8 @@ var List = function(id, options, values) {
     }
     for (var i = 0, il = values.length; i < il; i++) {
       var item = null;
-      if (values[i] instanceof Item) {
-        item = values[i];
-        item.reload();
-      } else {
-        notCreate = (self.items.length > self.page) ? true : false;
-        item = new Item(values[i], undefined, notCreate);
-      }
+      notCreate = (self.items.length > self.page) ? true : false;
+      item = new Item(values[i], undefined, notCreate);
       self.items.push(item);
       added.push(item);
     }
@@ -229,6 +261,12 @@ var List = function(id, options, values) {
   init.start();
 };
 
+
+// AMD support
+if (typeof define === 'function' && define.amd) {
+  define(function () { return List; });
+}
 module.exports = List;
+window.List = List;
 
 })(window);

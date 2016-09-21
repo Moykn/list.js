@@ -5,42 +5,27 @@ module.exports = function(grunt) {
   pkg: require("./package.json"),
   watch: {
     scripts: {
-      files: ['{,*/}*.js', '*.js', 'test/*.html', 'test/*.js'],
-      tasks: ['default'],
+      files: ['src/*.js', 'src/utils/*.js', '*.js', 'test/*.html', 'test/*.js'],
+      tasks: ['test'],
       options: {
         spawn: false,
       },
     },
   },
   shell: {
-    install: {
-      command: 'component install --dev',
-      options: {
-        stderr: true
-      }
-    },
     build: {
-      command: 'component build --dev',
+      command: 'node_modules/browserify/bin/cmd.js index.js > dist/list.js',
       options: {
         stderr: true
       }
-    },
-    standalone: {
-      command: 'component build --standalone List -n list.standalone'
-    },
-    mkdir: {
-      command: 'mkdir -p dist'
-    },
-    move: {
-      command: 'mv build/list.standalone.js dist/list.js'
     },
     remove: {
-      command: 'rm -fr build components dist'
+      command: 'rm -fr node_modules dist'
     }
   },
   jshint: {
     code: {
-    src: ['Gruntfile.js', '*.js', 'src/*.js'],
+    src: ['Gruntfile.js', '*.js', 'src/*.js', 'src/utils/*.js'],
     options: {
       expr: true,
       multistr: false,
@@ -91,11 +76,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-mocha');
 
-  grunt.registerTask('default', ['jshint:code', 'jshint:tests', 'shell:install', 'shell:build']);
-  grunt.registerTask('dist', ['default', 'shell:standalone', 'shell:mkdir', 'shell:move', 'uglify']);
+  grunt.registerTask('mkdir', function() { grunt.file.mkdir("dist"); });
+  grunt.registerTask('default', ['jshint:code', 'jshint:tests', 'mkdir', 'shell:build']);
+  grunt.registerTask('dist', ['default', 'mkdir', 'shell:build', 'uglify']);
   grunt.registerTask('clean', ['shell:remove']);
-
-  grunt.registerTask('test', ['mocha']);
+  grunt.registerTask('test', ['dist', 'mocha']);
 
   return grunt;
 };

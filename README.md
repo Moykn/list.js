@@ -22,6 +22,19 @@ Really simple and easy to use!
 - Plugins [Read more ›](http://listjs.com/docs/plugins)
 - Support for Chrome, Safari, Firefox, IE6+
 
+### Download / Install
+##### Via Bower
+```
+bower install list.js
+```
+##### Via CDNJS
+```html
+<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.2.0/list.min.js"></script>
+```
+##### Via Direct Download
+- [Compressed list.js](https://raw.githubusercontent.com/javve/list.js/v1.2.0/dist/list.min.js)
+- [Uncompressed list.js](https://raw.githubusercontent.com/javve/list.js/v1.2.0/dist/list.js)
+
 ### Demo / Examples
 - [Existing list](http://listjs.com/examples/existing-list)
 - [Existing list + add](http://listjs.com/examples/existing-list-add)
@@ -29,6 +42,10 @@ Really simple and easy to use!
 - [Add, get, remove](http://listjs.com/examples/add-get-remove)
 - [Fuzzy search](http://listjs.com/examples/fuzzy-search)
 - [Pagination](http://listjs.com/examples/pagination)
+- [Search in specific column](http://codepen.io/javve/pen/GpZpow)
+- [Filter in range](http://codepen.io/javve/pen/wKGKWL)
+- [Show message filter/search results in 0 items](http://codepen.io/javve/pen/VvavzG)
+- [Only show list after search/filter](http://codepen.io/javve/pen/YyqyRg)
 
 ## Documentation
 - [Getting started](http://listjs.com/docs)
@@ -42,13 +59,6 @@ Really simple and easy to use!
 - [Pagination](http://listjs.com/docs/plugins/pagination)
 - [Fuzzy search](http://listjs.com/docs/plugins/fuzzysearch)
 - [Build your own](http://listjs.com/docs/plugins/build)
-
-### TODO
-Features/problems I'll implement/fix in the future. (issues about 'em will be closed)
-- Tables row items can't be created with the `{ item: '<html>' }`-method.
-- Make it possible to re-index items and the entire list.
-- Support for data attributes
-- Support for templating images, links, inputs, more (?)
 
 ### Known issues
 - Sorting fails with some UTF8 characters. Example: `åä`, thinking that `ä` is before `å`.
@@ -73,8 +83,7 @@ Features/problems I'll implement/fix in the future. (issues about 'em will be cl
 * [jkeyes](https://github.com/jkeyes) / [John Keyes](http://keyes.ie/)
 * [samosad](https://github.com/samosad) / Alexey Tabakman
 * [Page-](https://github.com/Page-)
-
-Built with [Component](https://github.com/component/component) which is created by [TJ Holowaychuk](https://github.com/visionmedia).
+* [urkle](https://github.com/urkle) / Edward Rudd
 
 ### Want to contribute?
 - Read more at [listjs.com/overview/contribute](http://listjs.com/overview/contribute)
@@ -87,7 +96,5 @@ Built with [Component](https://github.com/component/component) which is created 
 
 ## License (MIT)
 
-Copyright (c) 2012 Jonny Strömberg <[jonny.stromberg@gmail.com](mailto:jonny.stromberg@gmail.com)>
+Copyright (c) 2012-2016 Jonny Strömberg <[jonny.stromberg@gmail.com](mailto:jonny.stromberg@gmail.com)>
 [http://jonnystromberg.com](http://jonnystromberg.com)
-
-[![Views in the last 24 hours](https://sourcegraph.com/api/repos/github.com/javve/list.js/counters/views-24h.png)](https://sourcegraph.com/github.com/javve/list.js)

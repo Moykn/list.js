@@ -25,11 +25,10 @@ describe('Defaults', function() {
     expect(list.searched).to.be(false);
     expect(list.filtered).to.be(false);
     expect(list.i).to.equal(1);
-    expect(list.page).to.equal(200);
+    expect(list.page).to.equal(10000);
     expect(list.listClass).to.equal('list');
     expect(list.sortClass).to.equal('sort');
     expect(list.searchClass).to.equal('search');
-    expect(list.page).to.equal(200);
   });
 
   it('should have the right elements', function() {
@@ -52,14 +51,14 @@ describe('Defaults', function() {
   });
 
   it('should have all helper methods', function() {
-    expect(list.helpers.classes).to.be.a('function');
-    expect(list.helpers.getAttribute).to.be.a('function');
-    expect(list.helpers.getByClass).to.be.a('function');
-    expect(list.helpers.naturalSort).to.be.a('function');
-    expect(list.helpers.events.bind).to.be.a('function');
-    expect(list.helpers.events.unbind).to.be.a('function');
-    expect(list.helpers.extend).to.be.a('function');
-    expect(list.helpers.indexOf).to.be.a('function');
-    expect(list.helpers.toString).to.be.a('function');
+    expect(list.utils.classes).to.be.a('function');
+    expect(list.utils.getAttribute).to.be.a('function');
+    expect(list.utils.getByClass).to.be.a('function');
+    expect(list.utils.naturalSort).to.be.a('function');
+    expect(list.utils.events.bind).to.be.a('function');
+    expect(list.utils.events.unbind).to.be.a('function');
+    expect(list.utils.extend).to.be.a('function');
+    expect(list.utils.indexOf).to.be.a('function');
+    expect(list.utils.toString).to.be.a('function');
   });
 });

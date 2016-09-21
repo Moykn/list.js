@@ -188,6 +188,21 @@ describe('Sort', function() {
       expect(list.sort).withArgs('val').to.not.throwException();
       expect(list.sort).withArgs('val').to.not.throwException();
     });
+    it('should handle values from issue 387', function() {
+        i1.values({ val: 'Test' });
+        i2.values({ val: 'Test1Test2' });
+        i3.values({ val: 'Bill-To Phone1 Extension' });
+        i4.values({ val: "z" });
+        i5.values({ val: "s" });
+        i6.values({ val: "y" });
+        list.sort('val', { order: 'asc' });
+        expect(list.items[0].values().val).to.be.equal('Bill-To Phone1 Extension');
+        expect(list.items[1].values().val).to.be.equal('s');
+        expect(list.items[2].values().val).to.be.equal('Test');
+        expect(list.items[3].values().val).to.be.equal('Test1Test2');
+        expect(list.items[4].values().val).to.be.equal('y');
+        expect(list.items[5].values().val).to.be.equal('z');
+    })
     /*
     it('should show how random values are sorted', function() {
       list.add({ id: '7', val: "" });
@@ -268,7 +283,7 @@ describe('Sort', function() {
       list.sort('val', {
         sortFunction: function(itemA, itemB, options) {
           options.desc = false;
-          return list.helpers.naturalSort($(itemA.values()[options.valueName]).val(), $(itemB.values()[options.valueName]).val(), options);
+          return list.utils.naturalSort($(itemA.values()[options.valueName]).val(), $(itemB.values()[options.valueName]).val(), options);
         }
       });
       expect(list.items[0].values().val).to.be.equal("<input value='a' />");
@@ -281,7 +296,7 @@ describe('Sort', function() {
     it('should use default custom sort function', function() {
       list.sortFunction = function(itemA, itemB, options) {
         options.desc = false;
-        return list.helpers.naturalSort($(itemA.values()[options.valueName]).val(), $(itemB.values()[options.valueName]).val(), options);
+        return list.utils.naturalSort($(itemA.values()[options.valueName]).val(), $(itemB.values()[options.valueName]).val(), options);
       };
       i1.values({ val: "<input value='b' />" });
       i2.values({ val: "<input value='a' />" });
@@ -300,7 +315,7 @@ describe('Sort', function() {
     it('should use default custom sort function with options', function() {
       list.sortFunction = function(itemA, itemB, options) {
         options.desc = true;
-        return list.helpers.naturalSort($(itemA.values()[options.valueName]).val(), $(itemB.values()[options.valueName]).val(), options);
+        return list.utils.naturalSort($(itemA.values()[options.valueName]).val(), $(itemB.values()[options.valueName]).val(), options);
       };
       i1.values({ val: "<input value='b' />" });
       i2.values({ val: "<input value='a' />" });

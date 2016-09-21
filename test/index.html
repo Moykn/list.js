@@ -2,7 +2,7 @@
 <head>
   <meta charset="utf-8">
   <title>List.js Mocha Tests</title>
-  <link rel="stylesheet" href="../build/build.css" />
+  <link rel="stylesheet" href="../node_modules/grunt-mocha/node_modules/mocha/mocha.css" />
   <style>
     #list,
     #parse-list,
@@ -14,21 +14,13 @@
 <body>
 
   <div id="mocha"></div>
-  <script src="../build/build.js"></script>
-  <script src="expect.js"></script> <!-- couldn't find a Component shim -->
-  <script src="mocha.js"></script> <!-- this specific version is needed for grunt-mocha (wtf...) -->
+  <script src="../node_modules/jquery/dist/jquery.js"></script>
+  <script src="../dist/list.js"></script>
+  <script src="../node_modules/expect.js/index.js"></script>
+  <script src="../node_modules/grunt-mocha/node_modules/mocha/mocha.js"></script>
 
   <script>
-    List = require('list.js');
-    $ = require('jquery');
-
-    if (navigator.userAgent.indexOf('PhantomJS') < 0) {
-      // This version is needed to not get "Out of stack space" error in IE
-      require('mocha');
-    }
-
     mocha.setup('bdd');
-    expect = require('expect.js');
   </script>
 
   <script src="fixtures.js"></script>
@@ -43,6 +35,7 @@
   <script src="test.on.js"></script>
   <script src="test.off.js"></script>
   <script src="test.trigger.js"></script>
+  <script src="test.re-index.js"></script>
 
   <script src="test.sort.js"></script>
   <script src="test.buttons.js"></script>
